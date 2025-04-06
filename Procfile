@@ -1,1 +1,1 @@
-start: python app/telegram_bot.py
+start: python src/telegram_bot.py
