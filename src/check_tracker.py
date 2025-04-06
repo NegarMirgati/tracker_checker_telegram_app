@@ -3,7 +3,7 @@ from playwright.async_api import async_playwright
 
 async def check_status(uci, password, context, update):
     async with async_playwright() as p:
-        browser = await playwright.chromium.launch(headless=True)
+        browser = await p.chromium.launch(headless=True)
         page = await browser.new_page()
         await page.goto("https://ircc-tracker-suivi.apps.cic.gc.ca/en/login")
 
