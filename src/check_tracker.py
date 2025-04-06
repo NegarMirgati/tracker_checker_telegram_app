@@ -1,7 +1,7 @@
 from playwright.async_api import async_playwright
 
 
-async def check_status(uci, password):
+async def check_status(uci, password, context, update):
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
         page = await browser.new_page()
@@ -14,11 +14,16 @@ async def check_status(uci, password):
         await page.wait_for_load_state("networkidle")
 
         # Step 2: Click 'View application history'
-        await page.screenshot(path="debug_before_click.png", full_page=True)
-        print("Screenshot taken before waiting for application history button.")
-        await page.wait_for_selector(
-            '[data-cy-button-id="app-details-btn"]', timeout=10000
-        )
+        screenshot_path = "/tmp/debug.png"
+        await page.screenshot(path=screenshot_path, full_page=True)
+
+        # Send screenshot to the user via Telegram
+        with open(screenshot_path, "rb") as f:
+            await context.bot.send_photo(
+                chat_id=update.effective_chat.id,
+                photo=f,
+                caption="📷 Here's the debug screenshot",
+            )
         await page.click('[data-cy-button-id="app-details-btn"]')
         await page.wait_for_load_state("networkidle")
 

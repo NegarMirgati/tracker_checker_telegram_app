@@ -40,7 +40,7 @@ async def get_password(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Checking status...")
 
     try:
-        status = await check_status(uci, password)
+        status = await check_status(uci, password, context, update)
     except Exception as e:
         status = f"Error: {str(e)}"
 
