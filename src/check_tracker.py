@@ -14,6 +14,8 @@ async def check_status(uci, password):
         await page.wait_for_load_state("networkidle")
 
         # Step 2: Click 'View application history'
+        await page.screenshot(path="debug_before_click.png", full_page=True)
+        print("Screenshot taken before waiting for application history button.")
         await page.wait_for_selector(
             '[data-cy-button-id="app-details-btn"]', timeout=10000
         )
