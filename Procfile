@@ -1,1 +1,1 @@
-start: python check_script.py
+start: python telegram_bot.py
