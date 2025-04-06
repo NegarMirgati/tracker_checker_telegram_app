@@ -21,21 +21,19 @@ async def check_status(uci, password, context, update):
         await page.click('button[type="submit"]')
         await page.wait_for_load_state("networkidle")
 
-        # Step 2: Take screenshot after login
-        screenshot_path = "/tmp/after_login.png"
-        await page.screenshot(path=screenshot_path, full_page=True)
-        with open(screenshot_path, "rb") as f:
-            await context.bot.send_photo(
-                chat_id=update.effective_chat.id,
-                photo=f,
-                caption="📷 After login — checking if we're logged in correctly",
-            )
-
         # Step 3: Wait for the "View application history" button
         try:
             await page.wait_for_selector(
-                '[data-cy-button-id="app-details-btn"]', timeout=20000
+                '[data-cy-button-id="app-details-btn"]', timeout=30000
             )
+            screenshot_path = "/tmp/after_login.png"
+            await page.screenshot(path=screenshot_path, full_page=True)
+            with open(screenshot_path, "rb") as f:
+                await context.bot.send_photo(
+                    chat_id=update.effective_chat.id,
+                    photo=f,
+                    caption="📷 After login — checking if we're logged in correctly",
+                )
             await page.click('[data-cy-button-id="app-details-btn"]')
             await page.wait_for_load_state("networkidle")
         except Exception as e:
