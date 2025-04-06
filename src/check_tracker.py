@@ -26,6 +26,13 @@ async def check_status(uci, password, context, update):
             await page.wait_for_selector(
                 '[data-cy-button-id="app-details-btn"]', timeout=30000
             )
+            await page.click('[data-cy-button-id="app-details-btn"]')
+            await page.wait_for_load_state("networkidle")
+        except Exception as e:
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=f"⚠️ Could not find the application history button. Error: {e}",
+            )
             screenshot_path = "/tmp/after_login.png"
             await page.screenshot(path=screenshot_path, full_page=True)
             with open(screenshot_path, "rb") as f:
@@ -34,13 +41,6 @@ async def check_status(uci, password, context, update):
                     photo=f,
                     caption="📷 After login — checking if we're logged in correctly",
                 )
-            await page.click('[data-cy-button-id="app-details-btn"]')
-            await page.wait_for_load_state("networkidle")
-        except Exception as e:
-            await context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text=f"⚠️ Could not find the application history button. Error: {e}",
-            )
             # Optionally take another screenshot here
 
         # Step 3: Find chip text under "Background verification"
