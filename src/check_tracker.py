@@ -3,13 +3,20 @@ from playwright.async_api import async_playwright
 
 async def check_status(uci, password, context, update):
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
+        browser = await p.chromium.launch(headless=False)
         page = await browser.new_page()
+
+        await page.set_extra_http_headers(
+            {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+            }
+        )
+
         await page.goto("https://ircc-tracker-suivi.apps.cic.gc.ca/en/login")
 
         # Step 1: Login
-        await page.fill('input[name="uci"]', uci)
-        await page.fill('input[name="password"]', password)
+        await page.locator('input[name="uci"]').type(uci, delay=100)
+        await page.locator('input[name="password"]').type(password, delay=100)
         await page.click('button[type="submit"]')
         await page.wait_for_load_state("networkidle")
 
