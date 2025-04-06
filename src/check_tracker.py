@@ -6,10 +6,6 @@ async def check_status(uci, password, context, update):
         browser = await p.chromium.launch(headless=True)
         page = await browser.new_page()
         await page.goto("https://ircc-tracker-suivi.apps.cic.gc.ca/en/login")
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=f"⚠️ Could not find the application history button. Error: {e}",
-        )
         screenshot_path = "/tmp/after_login.png"
         await page.screenshot(path=screenshot_path, full_page=True)
         with open(screenshot_path, "rb") as f:
