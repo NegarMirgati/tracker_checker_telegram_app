@@ -1,1 +1,1 @@
-start: python telegram_bot.py
+python tracker_checker/app/telegram_bot.py
