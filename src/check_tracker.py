@@ -14,25 +14,35 @@ async def check_status(uci, password, context, update):
 
         await page.goto("https://ircc-tracker-suivi.apps.cic.gc.ca/en/login")
 
-        # Step 1: Login
+        # Step 1: Login with delay
         await page.locator('input[name="uci"]').type(uci, delay=100)
         await page.locator('input[name="password"]').type(password, delay=100)
         await page.click('button[type="submit"]')
         await page.wait_for_load_state("networkidle")
 
-        # Step 2: Click 'View application history'
-        screenshot_path = "/tmp/debug.png"
+        # Step 2: Take screenshot after login
+        screenshot_path = "/tmp/after_login.png"
         await page.screenshot(path=screenshot_path, full_page=True)
-
-        # Send screenshot to the user via Telegram
         with open(screenshot_path, "rb") as f:
             await context.bot.send_photo(
                 chat_id=update.effective_chat.id,
                 photo=f,
-                caption="📷 Here's the debug screenshot",
+                caption="📷 After login — checking if we're logged in correctly",
             )
-        await page.click('[data-cy-button-id="app-details-btn"]')
-        await page.wait_for_load_state("networkidle")
+
+        # Step 3: Wait for the "View application history" button
+        try:
+            await page.wait_for_selector(
+                '[data-cy-button-id="app-details-btn"]', timeout=20000
+            )
+            await page.click('[data-cy-button-id="app-details-btn"]')
+            await page.wait_for_load_state("networkidle")
+        except Exception as e:
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=f"⚠️ Could not find the application history button. Error: {e}",
+            )
+            # Optionally take another screenshot here
 
         # Step 3: Find chip text under "Background verification"
         try:
