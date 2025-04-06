@@ -17,6 +17,7 @@ async def check_status(uci, password, context, update):
         # Step 1: Login with delay
         await page.locator('input[name="uci"]').type(uci, delay=100)
         await page.locator('input[name="password"]').type(password, delay=100)
+        await page.wait_for_timeout(500)
         await page.click('button[type="submit"]')
         await page.wait_for_load_state("networkidle")
 
